@@ -43,7 +43,7 @@ public class StockExchangeApiApplicationIntegrationTests {
     @Autowired
     private MockMvc mvc;
 
-//    @Test
+    @Test
     public void testAddTransaction() throws Exception {
         final TransactionRequest transactionRequest = TransactionRequest.of("ABCD", "USD", 135.55d);
         mvc.perform(
@@ -57,7 +57,7 @@ public class StockExchangeApiApplicationIntegrationTests {
                 .andExpect(jsonPath("$.identifier").exists());
     }
 
-//    @Test
+    @Test
     public void testAddTransaction_badRequest() throws Exception {
         mvc.perform(
                 post("/api/v1/transaction")
@@ -67,7 +67,7 @@ public class StockExchangeApiApplicationIntegrationTests {
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
     }
 
-//    @Test
+    @Test
     public void testFindTransactions() throws Exception {
         // save several transactions
         final List<TransactionRequest> requests = new ArrayList<>();
@@ -112,7 +112,7 @@ public class StockExchangeApiApplicationIntegrationTests {
                 .andExpect(jsonPath("$.amount.value").value(result.getAmount().getValue()));
     }
 
-//    @Test
+    @Test
     public void testFindByTransactionId_notFound() throws Exception {
         final String bogusIdentifier = UUID.randomUUID().toString();
         mvc.perform(get("/api/v1/transaction/id/" + bogusIdentifier))
