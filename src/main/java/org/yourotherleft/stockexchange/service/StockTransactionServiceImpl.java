@@ -10,9 +10,13 @@ import org.yourotherleft.stockexchange.persistence.type.TransactionType;
 import org.yourotherleft.stockexchange.service.type.TransactionRequest;
 import org.yourotherleft.stockexchange.service.type.TransactionResult;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.StreamSupport.stream;
 
 @Service
 public class StockTransactionServiceImpl implements StockTransactionService {
@@ -52,12 +56,47 @@ public class StockTransactionServiceImpl implements StockTransactionService {
         stockTransactionRepository.save(stockTransaction);
 
         // prepare a transaction result
-        final TransactionResult transactionResult = TransactionResult.of(stockTransaction.getIdentifier(), stockTransaction.getStockSymbol(), stockTransaction.getCurrency(), stockTransaction.getAmount(), stockTransaction.getShares());
+        final TransactionResult transactionResult = toTransactionResult(stockTransaction);
 
         // log it
         LOG.info("completed buy transaction request '{}' with result '{}'", transactionRequest, transactionResult);
 
         return transactionResult;
+    }
+
+    @Override
+    public List<TransactionResult> findAll() {
+        // fetch all known transaction entities and transform to transaction results
+        return stream(stockTransactionRepository.findAll().spliterator(), false)
+                .map(this::toTransactionResult)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<TransactionResult> findByIdentifier(final String identifier) {
+        requireNonNull(identifier, "identifier is null");
+
+        // fetch the transaction entity with the given identifier and transform to a transaction result, if one exists
+        final StockTransaction stockTransaction = stockTransactionRepository.findByIdentifier(identifier);
+        if (stockTransaction == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(toTransactionResult(stockTransaction));
+        }
+    }
+
+    @Override
+    public List<TransactionResult> findBySymbol(final String stockSymbol) {
+        requireNonNull(stockSymbol, "stock symbol is null");
+
+        // fetch all transaction entities with the given stock symbol and transform to transaction results
+        return stockTransactionRepository.findByStockSymbol(stockSymbol).stream()
+                .map(this::toTransactionResult)
+                .collect(Collectors.toList());
+    }
+
+    private TransactionResult toTransactionResult(final StockTransaction stockTransaction) {
+        return TransactionResult.of(stockTransaction.getIdentifier(), stockTransaction.getStockSymbol(), stockTransaction.getCurrency(), stockTransaction.getAmount(), stockTransaction.getShares());
     }
 
     private String generateUniqueTransactionIdentifier() {
