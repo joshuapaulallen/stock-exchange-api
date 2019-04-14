@@ -1,0 +1,93 @@
+{
+	"variables": [],
+	"info": {
+		"name": "stock-exchange-api",
+		"_postman_id": "7f357170-12a6-2747-d05d-54037523c150",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ping",
+			"request": {
+				"url": "http://localhost:8080/api/v1/admin/ping",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "buy stock",
+			"request": {
+				"url": "http://localhost:8080/api/v1/transaction",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"symbol\" : \"AAPL\",\n\t\"amount\" : {\n\t\t\"currencyUnit\" : \"USD\",\n\t\t\"value\" : 135.55\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get all transactions",
+			"request": {
+				"url": "http://localhost:8080/api/v1/transaction",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get transaction by identifier",
+			"request": {
+				"url": "http://localhost:8080/api/v1/transaction/id/c9f601a9-9462-41d2-9950-fc39fd8adb4a",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"symbol\" : \"AAPL\",\n\t\"amount\" : {\n\t\t\"currencyUnit\" : \"USD\",\n\t\t\"value\" : 135.55\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get transaction by stock symbol",
+			"request": {
+				"url": "http://localhost:8080/api/v1/transaction/symbol/AAPL",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"symbol\" : \"AAPL\",\n\t\"amount\" : {\n\t\t\"currencyUnit\" : \"USD\",\n\t\t\"value\" : 135.55\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
