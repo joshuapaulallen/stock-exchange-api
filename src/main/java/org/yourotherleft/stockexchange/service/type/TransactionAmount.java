@@ -1,10 +1,10 @@
 package org.yourotherleft.stockexchange.service.type;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@Builder
+@AllArgsConstructor
 public class TransactionAmount {
 
     private final String currencyUnit;
