@@ -58,13 +58,24 @@ public class StockExchangeApiApplicationIntegrationTests {
     }
 
     @Test
-    public void testAddTransaction_badRequest() throws Exception {
+    public void testAddTransaction_malformedRequest() throws Exception {
         mvc.perform(
                 post("/api/v1/transaction")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("this totally isn't valid")
         )
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    public void testAddTransaction_unsupportedCurrencyUnit() throws Exception {
+        final TransactionRequest transactionRequest = TransactionRequest.of("ABCD", "EUR", 135.55d);
+        mvc.perform(
+                post("/api/v1/transaction")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(getTransactionRequestAsJson(transactionRequest))
+        )
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));;
     }
 
     @Test

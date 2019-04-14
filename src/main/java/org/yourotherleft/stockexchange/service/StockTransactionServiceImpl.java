@@ -10,6 +10,7 @@ import org.yourotherleft.stockexchange.persistence.type.TransactionType;
 import org.yourotherleft.stockexchange.service.type.TransactionRequest;
 import org.yourotherleft.stockexchange.service.type.TransactionResult;
 
+import javax.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +36,9 @@ public class StockTransactionServiceImpl implements StockTransactionService {
     @Override
     public TransactionResult buy(final TransactionRequest transactionRequest) {
         requireNonNull(transactionRequest, "transaction request is null");
+
+        // validate prior to doing anything else
+        validateTransactionRequest(transactionRequest);
 
         // fetch the price of the stock in the request
         final double stockPrice = stockInfoService.getMarketPrice(transactionRequest.getSymbol());
@@ -93,6 +97,13 @@ public class StockTransactionServiceImpl implements StockTransactionService {
         return stockTransactionRepository.findByStockSymbol(stockSymbol).stream()
                 .map(this::toTransactionResult)
                 .collect(Collectors.toList());
+    }
+
+    private void validateTransactionRequest(final TransactionRequest transactionRequest) {
+        // only USD is supported, so make sure that's the currency unit
+        if (!transactionRequest.getAmount().getCurrencyUnit().equals("USD")) {
+            throw new BadRequestException(String.format("invalid currency unit '%s', only USD is supported", transactionRequest.getAmount().getCurrencyUnit()));
+        }
     }
 
     private TransactionResult toTransactionResult(final StockTransaction stockTransaction) {

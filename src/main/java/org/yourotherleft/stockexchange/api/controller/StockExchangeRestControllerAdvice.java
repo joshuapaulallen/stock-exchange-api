@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 /**
@@ -53,6 +54,19 @@ public class StockExchangeRestControllerAdvice {
     }
 
     /**
+     * A handler for {@link BadRequestException}. Returns a 400.
+     *
+     * @param e The exception.
+     * @return A {@link StockExchangeError} describing the error.
+     */
+    @ExceptionHandler(value = BadRequestException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public StockExchangeError handleBadRequest(final BadRequestException e) {
+        return new StockExchangeError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    /**
      * A handler for {@link HttpMessageNotReadableException}. Returns a 400.
      *
      * @param e The exception.
@@ -61,7 +75,7 @@ public class StockExchangeRestControllerAdvice {
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public StockExchangeError handleBadRequest(final HttpMessageNotReadableException e) {
+    public StockExchangeError handleUnparseableRequest(final HttpMessageNotReadableException e) {
         return new StockExchangeError(HttpStatus.BAD_REQUEST.value(), "malformed request");
     }
 
